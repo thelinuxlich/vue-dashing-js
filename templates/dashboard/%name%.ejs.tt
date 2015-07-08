@@ -1,0 +1,9 @@
+<div class="gridster">
+  <ul>
+    <li data-row="1" data-col="1" data-sizex="1" data-sizey="1">
+      <text id="my_widget"></text>
+    </li>
+  </ul>
+</div>
+<%- contentFor('title') %>
+My dashboard title

@@ -1,0 +1,21 @@
+extends layout
+
+block title
+  | Vue-dashing
+
+block content
+  div#dash
+    div.gridster
+      ul
+        li(data-row='1', data-col='1', data-sizex='2', data-sizey='1')
+          text(id='welcome' title='Hello' text='This is your shiny new dashboard.' moreinfo='Protip: You can drag the widgets around!')
+        li(data-row='1', data-col='1', data-sizex='1', data-sizey='1')
+          meter(id='synergy' title='Synergy' min='0' max='100')
+        li(data-row='1', data-col='1', data-sizex='1', data-sizey='2')
+          list(id='buzzwords' unordered='true' title='Buzzwords' moreinfo='# of times said around the office')
+        li(data-row='1', data-col='1', data-sizex='1', data-sizey='1')
+          number(id='valuation' title='Current Valuation' moreinfo='In billions' prefix='$')
+        li(data-row='1', data-col='1', data-sizex='2', data-sizey='1')
+          graph(id='convergence' title='Convergence' style='background-color:#ff9618')
+      center
+        div(style='font-size: 12px') Try this: curl -d '{ "auth_token": "YOUR_AUTH_TOKEN", "text": "Hey, Look what I can do!" }' -H "Content-Type: application/json" http://#{request.header('host')}/widgets/welcome

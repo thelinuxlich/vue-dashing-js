@@ -1,0 +1,9 @@
+//= require ./{= name }}.jst.jade
+
+Vue.component("{= Thor.Util.camel_case(name) }}", {
+    template: JST["{= name }}/{= name }}"](),
+    mixins: [Dashing.Widget],
+    ready: function() {
+        // This is fired when the widget is done being rendered 
+    }
+});

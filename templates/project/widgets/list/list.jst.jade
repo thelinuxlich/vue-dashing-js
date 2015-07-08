@@ -1,0 +1,15 @@
+div
+    h1(class="title") {{title}}
+
+    ol
+      li(v-repeat="items")
+        span(class="label") {{label}}
+        span(class="value") {{value}}
+      
+    ul(class="list-nostyle")
+      li(v-repeat="items")
+        span(class="label") {{label}}
+        span(class="value") {{value}}
+      
+    p(class="more-info") {{moreinfo}}
+    p(class="updated-at") {{updatedAtMessage}}
