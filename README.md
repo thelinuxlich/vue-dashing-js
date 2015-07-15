@@ -19,10 +19,17 @@ $ dashing-js new sweet_dashboard_project
 3. Change your directory to sweet_dashboard_project and install required modules
 
 ```shell
+$ sudo npm install -g browserify watchify
 $ cd sweet_dashboard_project && npm install
 ```
 
-4. Start the server!
+4. Start the automatic asset compilation task:
+
+```shell
+$ npm run watch
+```
+
+5. Start the server!
 
 ```shell
 $ dashing-js start
@@ -39,7 +46,7 @@ Every new Dashing project comes with sample widgets & sample dashboards for you 
 * Jobs — Your js/coffee jobs for fetching data (e.g for calling third party APIs like twitter). Name them *\*.job.js/\*.job.coffee*
 * Lib — Optional js/coffee files to help out your jobs.
 * Public — Static files that you want to serve. A good place for a favicon or a custom 404 page.
-* Widgets — All the html/css/coffee for individual widgets.
+* Widgets — All the vue templates for individual widgets.
 
 Run `dashing-js` from command line to find out what command line tools are available to you.
 
@@ -47,6 +54,5 @@ Run `dashing-js` from command line to find out what command line tools are avail
 
 * Implement all the basic widgets
 * Add a websocket option
-* Replace Mincer with something better
 * Refactoring
 

@@ -1,6 +1,4 @@
-// ----------------------------------------------------------------------------
-// Sass declarations
-// ----------------------------------------------------------------------------
+<style lang="sass">
 $background-color:  #12b0c5;
 $value-color:       #fff;
 
@@ -8,9 +6,6 @@ $title-color:       rgba(255, 255, 255, 0.7);
 $label-color:       rgba(255, 255, 255, 0.7);
 $moreinfo-color:    rgba(255, 255, 255, 0.7);
 
-// ----------------------------------------------------------------------------
-// Widget-list styles
-// ----------------------------------------------------------------------------
 .widget-list {
 
   background-color: $background-color;
@@ -58,3 +53,32 @@ $moreinfo-color:    rgba(255, 255, 255, 0.7);
   }
 
 }
+</style>
+<template lang="jade">
+div
+    h1(class="title") {{title}}
+
+    ol(v-show="!unordered")
+      li(v-repeat="items")
+        span(class="label") {{label}}
+        span(class="value") {{value}}
+      
+    ul(v-show="unordered" class="list-nostyle")
+      li(v-repeat="items")
+        span(class="label") {{label}}
+        span(class="value") {{value}}
+      
+    p(class="more-info") {{moreinfo}}
+    p(class="updated-at") {{updatedAtMessage}}
+</template>
+<script lang="es6">
+module.exports = {
+    mixins: [Dashing.Widget],
+    data() {
+        return {
+            items: []
+        };
+    },
+    props: ["unordered"]
+};
+</script>

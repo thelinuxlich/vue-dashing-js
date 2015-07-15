@@ -1,11 +1,77 @@
-//= require ./graph.jst.jade
+<template lang="jade">
+div
+    h1(class="title") {{title}}
 
-var graph;
+    h2(class="value") {{current | prettyNumber | prepend prefix}}
 
-Vue.component("graph", {
-    template: JST["graph/graph"](),
+    p(class="more-info") {{moreinfo}}
+</template>
+
+<style lang="sass">
+$background-color:  #dc5945;
+
+$title-color:       rgba(255, 255, 255, 0.7);
+$moreinfo-color:    rgba(255, 255, 255, 0.3);
+$tick-color:        rgba(0, 0, 0, 0.4);
+
+.widget-graph {
+
+  background-color: $background-color;
+  position: relative;
+
+  svg {
+    position: absolute;
+    opacity: 0.4;
+    fill-opacity: 0.4;
+    left: 0px;
+    top: 0px;
+  }
+
+  .title, .value {
+    position: relative;
+    z-index: 99;
+  }
+
+  .title {
+    color: $title-color;
+  }
+
+  .more-info {
+    color: $moreinfo-color;
+    font-weight: 600;
+    font-size: 20px;
+    margin-top: 0;
+  }
+
+  .x_tick {
+    position: absolute;
+    bottom: 0;
+    .title {
+      font-size: 20px;
+      color: $tick-color;
+      opacity: 0.5;
+      padding-bottom: 3px;
+    }
+  }
+
+  .y_ticks {
+    font-size: 20px;
+    fill: $tick-color;
+    fill-opacity: 1;
+  }
+
+  .domain {
+    display: none;
+  }
+}
+</style>
+
+<script lang="es6">
+let graph;
+
+module.exports = {
     mixins: [Dashing.Widget],
-    data: function() {
+    data() {
         return {
             points: null,
             displayedValue: null,
@@ -14,22 +80,21 @@ Vue.component("graph", {
     },
     props: ["prefix"],
     computed: {
-        current: function() {
+        current() {
             if (this.displayedValue) {
                 return this.displayedValue;
             }
-            var points = this.points;
+            const points = this.points;
             if (points) {
                 return points[points.length - 1].y;
             }
             return null;
         }
     },
-    ready: function() {
-        var el = this.$el,
-            self = this;
-        $(function() {
-            var container = $(el).parent(),
+    ready() {
+        const el = this.$el;
+        $(() => {
+            const container = $(el).parent(),
                 width = (Dashing.widget_base_dimensions[0] * container.data("sizex")) + Dashing.widget_margins[0] * 2 * (container.data("sizex") - 1),
                 height = (Dashing.widget_base_dimensions[1] * container.data("sizey"));
             graph = new Rickshaw.Graph({
@@ -52,11 +117,11 @@ Vue.component("graph", {
                 }
             });
 
-            if (self.points) {
-                graph.series[0].data = sel.points;
+            if (this.points) {
+                graph.series[0].data = this.points;
             }
 
-            var x_axis = new Rickshaw.Graph.Axis.Time({
+            const x_axis = new Rickshaw.Graph.Axis.Time({
                     graph: graph
                 }),
                 y_axis = new Rickshaw.Graph.Axis.Y({
@@ -65,7 +130,7 @@ Vue.component("graph", {
                 });
             graph.render();
 
-            self.$watch("points", function(value) {
+            this.$watch("points", (value) => {
                 if (graph) {
                     graph.series[0].data = value;
                     graph.render();
@@ -73,4 +138,5 @@ Vue.component("graph", {
             });
         });
     }
-});
+};
+</script>

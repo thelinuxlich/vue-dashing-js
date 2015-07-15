@@ -1,8 +1,4 @@
-//= require jquery
-//= require es5-shim
-//= require eventsource
-//= require vue
-//= require jade_runtime
+var Vue = require("vue");
 
 Vue.filter("prettyNumber", function(num) {
     if (!!num && !isNaN(num)) {
@@ -14,6 +10,10 @@ Vue.filter("prettyNumber", function(num) {
 
 Vue.filter("prepend", function(value, prefix) {
     return (prefix || "") + value;
+});
+
+Vue.filter("append", function(value, suffix) {
+    return value + (suffix || "");
 });
 
 Vue.filter("dashize", function(str) {
@@ -38,6 +38,33 @@ Vue.filter("shortenedNumber", function(num) {
 });
 
 window.Dashing = {
+    showGridsterInstructions: function() {
+        var newWidgetPositions = Dashing.getWidgetPositions();
+
+        if (JSON.stringify(newWidgetPositions) !== JSON.stringify(Dashing.currentWidgetPositions)) {
+            Dashing.currentWidgetPositions = newWidgetPositions;
+            $('#save-gridster').slideDown();
+            $('#gridster-code').text("<script type='text/javascript'>" +
+                "$(function() {" +
+                "Dashing.gridsterLayout('#{JSON.stringify(Dashing.currentWidgetPositions)}');" +
+                "});</script>");
+        }
+    },
+    getWidgetPositions: function() {
+        $(".gridster ul:first").gridster().data('gridster').serialize();
+    },
+    gridsterLayout: function(positions) {
+        Dashing.customGridsterLayout = true;
+        positions = positions.replace(/^"|"$/g, '');
+        positions = $.parseJSON(positions);
+        var widgets = $("[data-row^=]");
+
+        for (var i = 0; i < widgets.length; i++) {
+            var widget = widgets[i];
+            $(widget).attr('data-row', positions[i].row);
+            $(widget).attr('data-col', positions[i].col);
+        }
+    },
     Widget: {
         created: function() {
             this.receiveData(Dashing.lastEvents[this.id]);
@@ -52,8 +79,8 @@ window.Dashing = {
             updatedAtMessage: function() {
                 if (this.updatedAt) {
                     var timestamp = new Date(this.updatedAt * 1000),
-                        hours = timestamp.getHours()
-                    minutes = ("0" + timestamp.getMinutes()).slice(-2);
+                        hours = timestamp.getHours(),
+                        minutes = ("0" + timestamp.getMinutes()).slice(-2);
                     return "Last updated at " + hours + ":" + minutes;
                 } else {
                     return "";
@@ -137,28 +164,38 @@ source.addEventListener('dashboards', function(e) {
     // }
 });
 
-$(function() {
-    new Vue({
-        data: function() {
-            return {};
-        },
-        ready: function() {
-            Dashing.widget_margins = Dashing.widget_margins || [5, 5];
-            Dashing.widget_base_dimensions = Dashing.widget_base_dimensions || [300, 360];
-            Dashing.numColumns = Dashing.numColumns || 4;
-            var contentWidth = (Dashing.widget_base_dimensions[0] + Dashing.widget_margins[0] * 2) * Dashing.numColumns;
-            $('.gridster').width(contentWidth);
-            $('.gridster ul:first').gridster({
-                widget_margins: Dashing.widget_margins,
-                widget_base_dimensions: Dashing.widget_base_dimensions,
-                avoid_overlapped_widgets: !Dashing.customGridsterLayout,
-                draggable: {
-                    stop: Dashing.showGridsterInstructions,
-                    start: function() {
-                        Dashing.currentWidgetPositions = Dashing.getWidgetPositions();
-                    }
+new Vue({
+    components: {
+        graph: require("./widgets/graph/graph.vue"),
+        list: require("./widgets/list/list.vue"),
+        number: require("./widgets/number/number.vue"),
+        meter: require("./widgets/meter/meter.vue"),
+        text: require("./widgets/text/text.vue")
+    },
+    data: function() {
+        return {};
+    },
+    ready: function() {
+        Dashing.widget_margins = Dashing.widget_margins || [5, 5];
+        Dashing.widget_base_dimensions = Dashing.widget_base_dimensions || [300, 360];
+        Dashing.numColumns = Dashing.numColumns || 4;
+        var contentWidth = (Dashing.widget_base_dimensions[0] + Dashing.widget_margins[0] * 2) * Dashing.numColumns;
+        $('.gridster').width(contentWidth);
+        $('.gridster ul:first').gridster({
+            widget_margins: Dashing.widget_margins,
+            widget_base_dimensions: Dashing.widget_base_dimensions,
+            avoid_overlapped_widgets: !Dashing.customGridsterLayout,
+            draggable: {
+                stop: Dashing.showGridsterInstructions,
+                start: function() {
+                    Dashing.currentWidgetPositions = Dashing.getWidgetPositions();
                 }
-            });
-        }
-    }).$mount("#container");
-});
+            }
+        });
+        $('#save-gridster').leanModal();
+
+        $('#save-gridster').click(function() {
+            $('#save-gridster').slideUp();
+        });
+    }
+}).$mount("#container");
