@@ -6,7 +6,7 @@
   "private": true,
   "engine": "node >= 0.10",
   "dependencies": {
-    "vue": "^0.12.7",
+    "vue": "^0.12.9",
     "vue-dashing-js": "~{{= dashing.version }}"
   },
   "scripts": {
